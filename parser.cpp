@@ -1,9 +1,13 @@
 #include "parser.h"
+#include "cache.h"
 void parser::startSim(int argc, char **argv){
+
 	// if read parameters returns false (1) return out of main.
 	if(this->readParameters(argc, argv))
 		return;
 	this->readTrace();
+	cache cacheSim(cacheLines);
+	cacheSim.run(tag, cacheLine, offset);
 	this->printResult();
 	return;
 }
@@ -11,7 +15,7 @@ void parser::startSim(int argc, char **argv){
 parser::parser(){
 	cacheL1 = 0;
 	cacheL2 = 0;
-	cacheType = "";
+	cacheType = "direct";
 
 	numRead = 0;
 	numWrite = 0;
@@ -19,7 +23,8 @@ parser::parser(){
 
 void parser::readTrace(){
 	std::string line;
-
+	std::stringstream ss;
+	uint32_t bitLine, bitTag, bitCacheLine, bitOffset;
 	// read trace file and count reads and write
 	while(std::getline(std::cin,line)){
 		char *token = std::strtok((char *)line.c_str(), " \n\t");
@@ -34,8 +39,18 @@ void parser::readTrace(){
 				this->MemoryReference.push_back(1);
 			}
 			else{
+
 				std::string input(token);
-				this->Address.push_back(input);
+				ss << hex << input;
+				ss >> bitLine;
+				ss.clear();
+				bitTag = bitLine >> 32 - tagSize;
+				this->tag.push_back(bitTag);
+				bitCacheLine = bitLine << tagSize;
+				bitCacheLine = bitCacheLine >> (tagSize+5);
+				this->cacheLine.push_back(bitCacheLine);
+				bitOffset = bitLine & 31;
+				this->offset.push_back(bitOffset);
 			}
 			token = std::strtok(NULL, " ");
 		}
@@ -81,8 +96,17 @@ int parser::readParameters(int numArgs, char *parameters[]){
 		std::cout << "ERROR: Level 2 cache is not a power of 2\n";
 		return 1;
 	}
-
-
+	this->cacheLines = cacheL1 / 32;
+	if(cacheLines == 1024){
+		this->addressSize = 10;
+		this->tagSize = 17;
+	}else if(cacheLines == 512){
+			this->addressSize = 9;
+			this->tagSize = 18;
+	}else if(cacheLines == 2048){
+			this->addressSize = 11;
+			this->tagSize = 16;
+	}
 	return 0;
 }
 

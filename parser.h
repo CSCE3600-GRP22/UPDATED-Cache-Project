@@ -12,8 +12,13 @@ class parser{
 
 	private:
 		deque<int> MemoryReference;
-		deque<std::string> Address;
+		deque<uint32_t> tag;
+		deque<uint32_t> cacheLine;
+		deque<uint32_t> offset;
 		deque<std::string> Input;
+		int cacheLines;
+		int tagSize;
+		int addressSize;
 
 	public:
 		parser();

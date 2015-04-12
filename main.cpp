@@ -7,7 +7,7 @@
 
 //#include "cache.h"
 #include "parser.h"
-
+#include "cache.h"
 int main(int argc, char *argv[]){
 
 	parser name;
