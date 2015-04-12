@@ -13,5 +13,7 @@
 #include <sstream>
 #include <iomanip>
 #include <list>
+#include <bitset>
+#include <cstdint>
 
 using namespace std;
