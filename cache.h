@@ -6,6 +6,7 @@ class cache{
   private:
     uint32_t *block;
     uint32_t *tags;
+    int blockSize;
     int hit;
     int miss;
   public:

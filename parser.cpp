@@ -7,8 +7,8 @@ void parser::startSim(int argc, char **argv){
 		return;
 	this->readTrace();
 	cache cacheSim(cacheLines);
-	cacheSim.run(tag, cacheLine, offset);
 	this->printResult();
+	cacheSim.run(tag, cacheLine, offset);
 	return;
 }
 // initialize all needed variables
