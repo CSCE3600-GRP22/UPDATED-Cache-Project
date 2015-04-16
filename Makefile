@@ -9,4 +9,8 @@ cache.o		: cache.cpp parser.h cache.h
 clean:
 				rm *.o
 run:
-				./CacheSim -sizeL1 32768 -sizeL2 65536 -type direct < small_trace.txt
+				./CacheSim -sizeL1 32768 -sizeL2 65536 -type direct < big_trace.trace
+run64:
+				./CacheSim -sizeL1 65536 -sizeL2 65536 -type direct < big_trace.trace
+run16:
+				./CacheSim -sizeL1 16384 -sizeL2 32768 -type direct < big_trace.trace

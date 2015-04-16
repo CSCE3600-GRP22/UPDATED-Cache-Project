@@ -13,8 +13,8 @@ void parser::startSim(int argc, char **argv){
 }
 // initialize all needed variables
 parser::parser(){
-	cacheL1 = 0;
-	cacheL2 = 0;
+	cacheL1 = 32768;
+	cacheL2 = 65536;
 	cacheType = "direct";
 
 	numRead = 0;
@@ -131,5 +131,14 @@ void parser::printResult(){
 	std::cout << "\n\t\t" << numRead+numWrite << " Total";
 	std::cout << "\n\t\t" << numRead << " Reads";
 	std::cout << "\n\t\t" << numWrite << " Write";
+	std::cout << "\n";
+
+	std::cout << "\tCache Simulator Options";
+	std::cout << "\n\t\t" << addressSize << " bits for the address";
+	std::cout << "\n\t\t" << tagSize << " bits for the tag";
+	std::cout << "\n\t\t" << "5 bits for the offset";
+	std::cout << "\n\t\t" << cacheL1 << " KB of cache";
+	std::cout << "\n\t\t" << cacheLines << " cache lines";
+
 	std::cout << "\n";
 }

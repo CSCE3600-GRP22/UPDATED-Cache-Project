@@ -15,7 +15,7 @@ void cache::run(deque<uint32_t> tag, deque<uint32_t> address, deque<uint32_t> of
 
     deque<uint32_t>::iterator currentTag = tag.begin();
     deque<uint32_t>::iterator currentAddress = address.begin();
-    
+
     if(tags[(*currentAddress) % blockSize] == *currentTag){
       hit +=1;
     }else{
