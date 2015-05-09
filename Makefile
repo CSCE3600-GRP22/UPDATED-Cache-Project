@@ -11,6 +11,12 @@ clean:
 run:
 				./CacheSim -sizeL1 32768 -sizeL2 65536 -type direct < big_trace.trace
 run64:
-				./CacheSim -sizeL1 65536 -sizeL2 65536 -type direct < big_trace.trace
+				./CacheSim -sizeL1 65536 -sizeL2 131072 -type direct < big_trace.trace
 run16:
 				./CacheSim -sizeL1 16384 -sizeL2 32768 -type direct < big_trace.trace
+runFull:
+				./CacheSim -sizeL1 32768 -sizeL2 65536 -type full < big_trace.trace
+runFull64:
+				./CacheSim -sizeL1 65536 -sizeL2 131072 -type full < big_trace.trace
+runFull16:
+				./CacheSim -sizeL1 16384 -sizeL2 32768 -type full < big_trace.trace

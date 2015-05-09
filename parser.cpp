@@ -6,9 +6,12 @@ void parser::startSim(int argc, char **argv){
 	if(this->readParameters(argc, argv))
 		return;
 	this->readTrace();
-	cache cacheSim(cacheLines);
+	cache cacheSim(cacheLines, cache2Lines);
 	this->printResult();
-	cacheSim.run(tag, cacheLine, offset);
+	if(!cacheType.compare("direct"))
+		cacheSim.runDirect(tag, cacheLine, offset, tag2, cache2Line);
+	else if(!cacheType.compare("full"))
+		cacheSim.runFull(tag, offset);
 	return;
 }
 // initialize all needed variables
@@ -51,6 +54,14 @@ void parser::readTrace(){
 				this->cacheLine.push_back(bitCacheLine);
 				bitOffset = bitLine & 31;
 				this->offset.push_back(bitOffset);
+				if(!cacheType.compare("direct")){
+					bitTag = bitLine >> 32 - tag2Size;
+					this->tag2.push_back(bitTag);
+					bitCacheLine = bitLine << tag2Size;
+					bitCacheLine = bitCacheLine >> (tag2Size+5);
+					this->cache2Line.push_back(bitCacheLine);
+
+				}
 			}
 			token = std::strtok(NULL, " ");
 		}
@@ -97,7 +108,27 @@ int parser::readParameters(int numArgs, char *parameters[]){
 		return 1;
 	}
 	this->cacheLines = cacheL1 / 32;
-	if(cacheLines == 1024){
+	this->cache2Lines = cacheL2 / 32;
+	if(!cacheType.compare("direct")){
+		for(int i = 0; i < 27; i++){
+			if(pow(2, i) == this->cacheLines){
+				this->addressSize = i;
+				this->tagSize = 32-(i+5);
+				break;
+			}
+		}
+		for(int i = 0; i < 27; i++){
+			if(pow(2, i) == this->cache2Lines){
+				this->address2Size = i;
+				this->tag2Size = 32-(i+5);
+				break;
+			}
+		}
+	}else if(!cacheType.compare("full")){
+		this->addressSize = this->address2Size = 0;
+		this->tagSize = this->tag2Size = 27;
+	}
+	/*if(cacheLines == 1024){
 		this->addressSize = 10;
 		this->tagSize = 17;
 	}else if(cacheLines == 512){
@@ -106,7 +137,7 @@ int parser::readParameters(int numArgs, char *parameters[]){
 	}else if(cacheLines == 2048){
 			this->addressSize = 11;
 			this->tagSize = 16;
-	}
+	}*/
 	return 0;
 }
 
@@ -134,11 +165,17 @@ void parser::printResult(){
 	std::cout << "\n";
 
 	std::cout << "\tCache Simulator Options";
-	std::cout << "\n\t\t" << addressSize << " bits for the address";
-	std::cout << "\n\t\t" << tagSize << " bits for the tag";
-	std::cout << "\n\t\t" << "5 bits for the offset";
-	std::cout << "\n\t\t" << cacheL1 << " KB of cache";
-	std::cout << "\n\t\t" << cacheLines << " cache lines";
+	std::cout << "\n\t\t" << addressSize << " bits for the address Level 1";
+	std::cout << "\n\t\t" << tagSize << " bits for the tag Level 1";
+	std::cout << "\n\t\t" << "5 bits for the offset Level 1";
+	std::cout << "\n\t\t" << cacheL1 << " KB of cache Level 1";
+	std::cout << "\n\t\t" << cacheLines << " cache lines Level 1";
+	std::cout << endl;
+	std::cout << "\n\t\t" << address2Size << " bits for the address Level 2";
+	std::cout << "\n\t\t" << tag2Size << " bits for the tag Level 2";
+	std::cout << "\n\t\t" << "5 bits for the offset Level 2";
+	std::cout << "\n\t\t" << cacheL2 << " KB of cache Level 2";
+	std::cout << "\n\t\t" << cache2Lines << " cache lines Level 2";
 
 	std::cout << "\n";
 }
